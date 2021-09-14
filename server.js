@@ -31,4 +31,4 @@ if(message.content === "embed") {
 
 
 
-client.login("ODg2ODc5MDYyOTA2MjQ5MjI2.YT8Afg.4KwDJ_eOW46j9xpS7NPdRcMXRWE")
+client.login("")
