@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <!-- 
+    This is the main Handlebars template for the site 
+    - When the user visits the homepage or submits a choice the app calls the endpoints in server.js
+    - The server script passes data in here and the Handlebars code builds it into the HTML page
+  -->
+
+  <meta charset="utf-8" />
+  <link rel="icon" href="https://glitch.com/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>{{seo.title}}</title>
+
+  <!-- Meta tags for SEO and social sharing -->
+  <link rel="canonical" href="{{seo.url}}">
+  <meta name="description" content="{{seo.description}}">
+  <meta property="og:title" content="{{seo.title}}">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="{{seo.url}}">
+  <meta property="og:description" content="{{seo.description}}">
+  <meta property="og:image" content="{{seo.image}}">
+  <meta name="twitter:card" content="summary">
+
+  <!-- Import the webpage's stylesheet -->
+  <link rel="stylesheet" href="/style.css" />
+
+  <!-- Show choice chart on poll submission -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script type="text/javascript">
+    /*
+    The chart uses chart.js - try tweaking the config!
+    https://www.chartjs.org/docs/3.0.2/charts/doughnut.html
+    
+    We pass the choices and picks arrays from the page when the server script returns them
+    */
+    function showChart(choices, picks) {
+      
+      // Get the page element to show the chart inside
+      var ctx = document.getElementById('myChart');
+      
+      // Set up the chart colors
+      var colors = ["#05DA84", "#E6E656", "#E5AED6"];
+      var border = "#ffffff";
+      
+      // Make sure we have some votes–if not show an empty chart
+      if(picks.reduce((a, b) => a + b, 0)<1) {
+        picks=["1e-10"]; // use a near zero value so that the doughnut displays
+        choices=["No votes! Reload and vote again."];
+        colors=["#00000000"]; // we'll show an empty doughnut shape
+        border=["#000000"];
+      }
+      
+      // Build the chart in the page element
+      var myLineChart = new Chart(ctx, {
+        type: "doughnut",
+        data: {
+          labels: choices,
+          datasets: [{
+            data: picks,
+            backgroundColor: colors,
+            borderColor: border,
+            fill: true,
+            hoverOffset: 12,
+            cutout: "60%"
+          }]
+        },
+        options: {
+          plugins: {
+            legend: {
+              display: true,
+              position: "bottom",
+              labels: {
+                padding: 24
+              }
+            }
+          },
+          layout: {
+            padding: 24
+          }
+        }
+      });
+    }
+  </script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+    <div class="content" role="main">
+
+      <!-- This is the start of content for our page -->
+      <h1>Hello SQLite!</h1>
+      <p>
+        A poll built with Chart.js and powered by Node.js with a {{seo.db}} database.
+      </p>
+      {{#if error}}
+      <p class="error">
+        {{error}}
+      </p>
+      
+      {{else}}
+      <!-- Server returns a flag when the user has submitted a choice and we show the results -->
+      
+      {{#if results}}
+      <h2>
+        Results
+      </h2>
+      <div class="poll-results">
+        <p>
+          Submissions so far (see the <a href="/logs">Admin</a> page for a log):
+        </p>
+        <p>
+          <!-- Pass arrays from the API to the chart script in page head -->
+          <canvas id="myChart"></canvas>
+          <script type="text/javascript">
+            showChart("{{{ optionNames }}}".split(","), "{{{ optionCounts }}}".split(","));
+          </script>
+        </p>
+        <!-- If the user hasn't already made a choice we show the poll -->
+      </div>
+      
+      {{else}}
+      <h2>
+        Poll
+      </h2>
+      <div class="poll-form">
+        <p>
+          What do you like coding most?
+        </p>
+        <!-- Call the server post endpoint when the user submits an option in the poll -->
+        <form method="post" action="/">
+          <!-- The server script returns the list of language options to offer in the poll -->
+          {{#each optionNames}}
+          <input type="radio" id="{{this}}" name="language" value="{{this}}" required />
+          <label for="{{this}}">{{this}}</label>
+          {{/each}}
+          <br /><br />
+          <button type="submit">
+            Submit
+          </button>
+        </form>
+        <!-- ADD LINK FROM README NEXT STEPS -->
+        
+      </div>
+      {{/if}}
+      {{/if}}
+
+      <!-- Instructions on using this project -->
+      <div class="instructions">
+        <h2>
+          Using this project
+        </h2>
+        <p>
+          This is the Glitch <strong>Hello {{seo.db}}</strong> project. You can use it to build your own app. Check out README.md in the editor for more info and next steps you can take!
+        </p>
+      </div>
+
+    </div>
+  </div>
+  <!-- The footer holds our remix button — you can use it for structure or cut it out ✂ -->
+  <footer class="footer">
+    <div class="links"></div>
+    <a href="/">Home</a>
+    <span class="divider">|</span>
+    <a href="/logs">Admin</a>
+    <a class="btn--remix" target="_top" href="https://glitch.com/edit/#!/remix/glitch-hello-sqlite">
+      <img src="https://cdn.glitch.com/605e2a51-d45f-4d87-a285-9410ad350515%2FLogo_Color.svg?v=1618199565140"
+        alt="" />
+      Remix on Glitch
+    </a>
+  </footer>
+</body>
+
+</html>

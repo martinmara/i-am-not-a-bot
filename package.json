@@ -1,0 +1,31 @@
+{
+  "name": "hello-sqlite",
+  "version": "0.0.1",
+  "description": "A Node app with SQLite database, instantly up and running.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "discord.js": "^12.5.3",
+    "fastify": "^3.16.2",
+    "fastify-formbody": "^5.0.0",
+    "fastify-static": "^4.2.2",
+    "handlebars": "^4.7.7",
+    "point-of-view": "^4.14.0",
+    "sqlite": "^4.0.23",
+    "sqlite3": "^5.0.2"
+  },
+  "engines": {
+    "node": "12.x"
+  },
+  "repository": {
+    "url": "https://glitch.com/edit/#!/hello-sqlite"
+  },
+  "license": "MIT",
+  "keywords": [
+    "node",
+    "glitch",
+    "sqlite"
+  ]
+}
